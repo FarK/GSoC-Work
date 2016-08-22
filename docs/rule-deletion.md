@@ -1,0 +1,1 @@
+# Rule deletion by description
