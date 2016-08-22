@@ -4,12 +4,12 @@ pages:
         - Home: index.md
         - My work:
                 - Features:
-                        - Rule replacement: rule-replacement.md
-                        - TLV Infrastructure: tlv-infrastructure.md
                         - Rule deletion: rule-deletion.md
+                        - TLV Infrastructure: tlv-infrastructure.md
+                        - Rule replacement: rule-replacement.md
                 - Small Features: small-features.md
                 - Fixes: fixes.md
                 - List of commits: commits.md
-        - About: about.md
+        - My activity: activity.md
 
 theme: slate
