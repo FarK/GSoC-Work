@@ -1,14 +1,14 @@
 # List of my commits
 
-Here is a list of my commits to the netfilter project sorted by repository.
-You can click a commit title to open its diff.
+Here is a list of my commits to the Netfilter project sorted by repository.
+You can click a commit title to open its diff and description.
 
-# [nftables](http://netfilter.org/projects/nftables/index.html "nftables proyect page")
+# [nftables](http://netfilter.org/projects/nftables/index.html "nftables project page")
 
-* [parser: Improve syntax errors                                                ](https://git.netfilter.org/nftables/commit/?id=4d29a6e920e9cf3e16c91809bdb75a70f85de68f)
-* [test: shell: Add tests for deleting rule by description                      ](https://git.netfilter.org/nftables/commit/?id=96326ca50bcb7873882cca41f36f766ee6ef88e2)
-* [Implement deleting rule by description                                       ](https://git.netfilter.org/nftables/commit/?id=38da949740eb2bfb0eefa4ce6339f924284d7298)
-* [Simplify parser rule_spec tree                                               ](https://git.netfilter.org/nftables/commit/?id=8575144367c0c562deca17deba0bc3c70843760e)
+* *PENDING APPOVAL* [parser: Improve syntax errors                              ](https://github.com/FarK/nf-nftables/commit/842c89d3ddda78d2c4e3e241f07264a780fe53f8)
+* *PENDING APPOVAL* [test: shell: Add tests for deleting rule by description    ](https://github.com/FarK/nf-nftables/commit/ed007e53d5f9adc91d65f61900770f1cb62a5f12)
+* *PENDING APPOVAL* [Implement deleting rule by description                     ](https://github.com/FarK/nf-nftables/commit/d6b4900e32de3aa2c319b975770e9412c8ad2bec)
+* [Simplify parser rule_spec tree                                               ](https://git.netfilter.org/nftables/commit/cec8dde7af3ec0f2e16d6445b14f77a2c357221e)
 * [parser: cap comment length to 128 bytes                                      ](https://git.netfilter.org/nftables/commit/?id=aef75641d196ddc199df35092823f178b998a6a3)
 * [parser: Consolidate comment production                                       ](https://git.netfilter.org/nftables/commit/?id=ab88635f6f71fbacdbcba05e70058d31e70bcd66)
 * [set_elem: Use libnftnl/udata to store set element comment                    ](https://git.netfilter.org/nftables/commit/?id=61f851beda31aa3a7dcd4ef534d91b5cfb13594b)
@@ -16,7 +16,7 @@ You can click a commit title to open its diff.
 * [rule: Use libnftnl user data TLV infrastructure                              ](https://git.netfilter.org/nftables/commit/?id=795d88cb710512d9b85afbb17beaeec3d92dcd54)
 * [src: Add command "replace" for rules                                         ](https://git.netfilter.org/nftables/commit/?id=0721fbbe7a951a1e879d120c7a722012c38af9a6)
 
-# [libnftnl](http://netfilter.org/projects/libnftnl/index.html "libnftnl proyect page")
+# [libnftnl](http://netfilter.org/projects/libnftnl/index.html "libnftnl project page")
 
 * [rule: Fix comparison between rules if number of expressions differ           ](https://git.netfilter.org/libnftnl/commit/?id=0cbe60118eafe734de7369783cf1c92f6e0934f1)
 * [src: Implement rule comparison                                               ](https://git.netfilter.org/libnftnl/commit/?id=e35693fd13de771e1e047ffa4f799f72f1446e8d)
@@ -45,10 +45,10 @@ You can click a commit title to open its diff.
 * [udata: add TLV user data infrastructure                                      ](https://git.netfilter.org/libnftnl/commit/?id=5c3bc232dc9d1dd01d589fab096f67d944621fc2)
 * [src: fix memory leaks at nft_[object]_nlmsg_parse                            ](https://git.netfilter.org/libnftnl/commit/?id=6e188637782c6c62c7bcade808e59d17639d677d)
 
-# [libmnl](http://netfilter.org/projects/libmnl/index.html "libmnl proyect page")
+# [libmnl](http://netfilter.org/projects/libmnl/index.html "libmnl project page")
 
 * [nlmsg: Improve payload printing                                              ](https://git.netfilter.org/libmnl/commit/?id=610b1208a4d87b874e55982d44c0a9a1a1b7b00d)
 
-# [kernel](https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git "linux kernel cgitgit page")
+# [kernel](https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git "linux kernel cgit page")
 
-* [netfilter: nf_tables: Add new attributes into nft_set to store user data.    ](https://git.kernel.org/pub/scm/linux/kernel/git/pablo/nf-next.git/commit/?id=e6d8ecac9e68265aee9be711c5bd29406129666f)
+* [netfilter: nf_tables: Add new attributes into nft_set to store user data.    ](https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=e6d8ecac9e68265aee9be711c5bd29406129666f)
