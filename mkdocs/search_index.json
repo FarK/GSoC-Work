@@ -1,0 +1,184 @@
+{
+    "docs": [
+        {
+            "location": "/",
+            "text": "Work Product\n\n\nI have tried to organize all my contributions to the Netfilter project along the\nGSoC in this little web.\n\n\nMain features\n\n\nI have developed three main new features, for the user space tool nftables and\nthe library libnftnl. You can see a description and its commits in corresponding\nsubpage:\n\n\n\n\nRule deletion by description\n\n\nTLV infrastructure for user data\n\n\nRule replacement\n\n\n\n\nSmall features and bugs fixes\n\n\nI also have developed some small features and fixed several bugs. You can take a\nlook in these links:\n\n\n\n\nSmall features\n\n\nFixes\n\n\n\n\nAll commits\n\n\nAt this page you can access to a list of all my commits sorted by\nrepository:\n\n\n\n\nList of commits\n\n\n\n\nProject activity\n\n\nYou can get an impression about my activity into the project glancing the\n\nproject patchwork",
+            "title": "Home"
+        },
+        {
+            "location": "/#work-product",
+            "text": "I have tried to organize all my contributions to the Netfilter project along the\nGSoC in this little web.",
+            "title": "Work Product"
+        },
+        {
+            "location": "/#main-features",
+            "text": "I have developed three main new features, for the user space tool nftables and\nthe library libnftnl. You can see a description and its commits in corresponding\nsubpage:   Rule deletion by description  TLV infrastructure for user data  Rule replacement",
+            "title": "Main features"
+        },
+        {
+            "location": "/#small-features-and-bugs-fixes",
+            "text": "I also have developed some small features and fixed several bugs. You can take a\nlook in these links:   Small features  Fixes",
+            "title": "Small features and bugs fixes"
+        },
+        {
+            "location": "/#all-commits",
+            "text": "At this page you can access to a list of all my commits sorted by\nrepository:   List of commits",
+            "title": "All commits"
+        },
+        {
+            "location": "/#project-activity",
+            "text": "You can get an impression about my activity into the project glancing the project patchwork",
+            "title": "Project activity"
+        },
+        {
+            "location": "/rule-deletion/",
+            "text": "Rule deletion by description\n\n\nThis patch introduces deletion in a similar fashion as in iptables, thus,\nwe can delete the first rule that matches our description, for example:\n\n\n$ nft list -a ruleset\ntable ip t {\n    chain c {\n        ip saddr 1.1.1.1 counter packets 0 bytes 0 # handle 1\n        ip saddr 1.1.1.2 counter packets 0 bytes 0 # handle 2\n        ip saddr 1.1.1.2 counter packets 0 bytes 0 # handle 3\n        ip saddr 1.1.1.4 counter packets 0 bytes 0 # handle 4\n    }\n}\n$ nft delete rule table chain ip saddr 1.1.1.2 counter\n$ nft list -a ruleset\ntable ip t {\n    chain c {\n        ip saddr 1.1.1.1 counter packets 0 bytes 0 # handle 1\n        ip saddr 1.1.1.2 counter packets 0 bytes 0 # handle 3\n        ip saddr 1.1.1.4 counter packets 0 bytes 0 # handle 4\n    }\n}\n\n\n\n\nFor archive this I have needed to introduce several changes into libnftnl\nlibrary. I have implemented comparators for rule and expression objects.\n\n\nNOTE:\n I have some patches that must be accepted before I can consider the\nwork completed.\n\n\nCommits\n\n\nnftables\n\n\n\n\nPENDING APPOVAL\n \nparser: Improve syntax errors                              \n\n\nPENDING APPOVAL\n \ntest: shell: Add tests for deleting rule by description    \n\n\nPENDING APPOVAL\n \nImplement deleting rule by description                     \n\n\nPENDING APPOVAL\n \nSimplify parser rule_spec tree                             \n\n\n\n\nlibnftnl\n\n\n\n\nrule: Fix comparison between rules if number of expressions differ           \n\n\nsrc: Implement rule comparison                                               \n\n\nrule: Implement internal iterator for expressions                            \n\n\nsrc: Constify iterators",
+            "title": "Rule deletion"
+        },
+        {
+            "location": "/rule-deletion/#rule-deletion-by-description",
+            "text": "This patch introduces deletion in a similar fashion as in iptables, thus,\nwe can delete the first rule that matches our description, for example:  $ nft list -a ruleset\ntable ip t {\n    chain c {\n        ip saddr 1.1.1.1 counter packets 0 bytes 0 # handle 1\n        ip saddr 1.1.1.2 counter packets 0 bytes 0 # handle 2\n        ip saddr 1.1.1.2 counter packets 0 bytes 0 # handle 3\n        ip saddr 1.1.1.4 counter packets 0 bytes 0 # handle 4\n    }\n}\n$ nft delete rule table chain ip saddr 1.1.1.2 counter\n$ nft list -a ruleset\ntable ip t {\n    chain c {\n        ip saddr 1.1.1.1 counter packets 0 bytes 0 # handle 1\n        ip saddr 1.1.1.2 counter packets 0 bytes 0 # handle 3\n        ip saddr 1.1.1.4 counter packets 0 bytes 0 # handle 4\n    }\n}  For archive this I have needed to introduce several changes into libnftnl\nlibrary. I have implemented comparators for rule and expression objects.  NOTE:  I have some patches that must be accepted before I can consider the\nwork completed.",
+            "title": "Rule deletion by description"
+        },
+        {
+            "location": "/rule-deletion/#commits",
+            "text": "",
+            "title": "Commits"
+        },
+        {
+            "location": "/rule-deletion/#nftables",
+            "text": "PENDING APPOVAL   parser: Improve syntax errors                                PENDING APPOVAL   test: shell: Add tests for deleting rule by description      PENDING APPOVAL   Implement deleting rule by description                       PENDING APPOVAL   Simplify parser rule_spec tree",
+            "title": "nftables"
+        },
+        {
+            "location": "/rule-deletion/#libnftnl",
+            "text": "rule: Fix comparison between rules if number of expressions differ             src: Implement rule comparison                                                 rule: Implement internal iterator for expressions                              src: Constify iterators",
+            "title": "libnftnl"
+        },
+        {
+            "location": "/tlv-infrastructure/",
+            "text": "TLV Infrastructure for user data\n\n\nThe aim of this infrastructure is provide an easy way to store sequentially user\ndata into nft kernel objects. It provides functions that allow to create a\nbuffer of TLV (Type-Len-Value).\n\n\nThe structures looks like this:\n\n\n/*\n * TLV structures:\n * nftnl_udata\n *  <-------- HEADER --------> <------ PAYLOAD ------>\n * +------------+-------------+- - - - - - - - - - - -+\n * |    type    |     len     |         value         |\n * |  (1 byte)  |   (1 byte)  |                       |\n * +--------------------------+- - - - - - - - - - - -+\n *  <-- sizeof(nftnl_udata) -> <-- nftnl_udata->len -->\n */\nstruct nftnl_udata {\n        uint8_t         type;\n        uint8_t         len;\n        unsigned char   value[];\n} __attribute__((__packed__));\n\n/*\n *              +---------------------------------++\n *              | data[]                          ||\n *              |   ||                            ||\n *              |   \\/                            \\/\n *  +-------+-------+-------+-------+ ... +-------+- - - - - - -+\n *  | size  |  end  |  TLV  |  TLV  |     |  TLV  |    Empty    |\n *  +-------+-------+-------+-------+ ... +-------+- - - - - - -+\n *                  |<---- nftnl_udata_len() ---->|\n *                  |<----------- nftnl_udata_size() ---------->|\n */\nstruct nftnl_udata_buf {\n        uint32_t        size;\n        char            *end;\n        char            data[];\n};\n\n\n\n\nAnd here is and example of use:\n\n\nstruct nftnl_udata_buf *buf;\nstruct nftnl_udata *attr;\nconst char *str = \"Hello World!\";\n\nbuf = nftnl_udata_buf_alloc(UDATA_SIZE);\nif (!buf) {\n        perror(\"OOM\");\n        exit(EXIT_FAILURE);\n}\n\nif (!nftnl_udata_put_strz(buf, MY_TYPE, str)) {\n        perror(\"Can't put attribute \\\"%s\\\"\", str);\n        exit(EXIT_FAILURE);\n}\n\nnftnl_udata_for_each(buf, attr)\n        printf(\"%s\\n\", (char *)nftnl_udata_attr_value(attr));\n\nnftnl_udata_buf_free(buf);\n\n\n\n\nCommits\n\n\nnftables\n\n\n\n\nset_elem: Use libnftnl/udata to store set element comment                    \n\n\nnetlink_linearize: do not duplicate user data when linearizing user data     \n\n\nrule: Use libnftnl user data TLV infrastructure                              \n\n\n\n\nlibnftnl\n\n\n\n\ntests: Check set user data                                                   \n\n\nset: Add new attribute into 'set' to store user data                         \n\n\nset_elem: Copy user data memory                                              \n\n\nset_elem: Fix memory leak                                                    \n\n\nrule: Fix segfault due to invalid free of rule user data                     \n\n\ntests: Free nftnl_udata_buf before exit                                      \n\n\ntests: nft-rule-test: check for NFTNL_RULE_USERDATA                          \n\n\nudata: add TLV user data infrastructure                                      \n\n\n\n\nkernel\n\n\n\n\nnetfilter: nf_tables: Add new attributes into nft_set to store user data.",
+            "title": "TLV Infrastructure"
+        },
+        {
+            "location": "/tlv-infrastructure/#tlv-infrastructure-for-user-data",
+            "text": "The aim of this infrastructure is provide an easy way to store sequentially user\ndata into nft kernel objects. It provides functions that allow to create a\nbuffer of TLV (Type-Len-Value).  The structures looks like this:  /*\n * TLV structures:\n * nftnl_udata\n *  <-------- HEADER --------> <------ PAYLOAD ------>\n * +------------+-------------+- - - - - - - - - - - -+\n * |    type    |     len     |         value         |\n * |  (1 byte)  |   (1 byte)  |                       |\n * +--------------------------+- - - - - - - - - - - -+\n *  <-- sizeof(nftnl_udata) -> <-- nftnl_udata->len -->\n */\nstruct nftnl_udata {\n        uint8_t         type;\n        uint8_t         len;\n        unsigned char   value[];\n} __attribute__((__packed__));\n\n/*\n *              +---------------------------------++\n *              | data[]                          ||\n *              |   ||                            ||\n *              |   \\/                            \\/\n *  +-------+-------+-------+-------+ ... +-------+- - - - - - -+\n *  | size  |  end  |  TLV  |  TLV  |     |  TLV  |    Empty    |\n *  +-------+-------+-------+-------+ ... +-------+- - - - - - -+\n *                  |<---- nftnl_udata_len() ---->|\n *                  |<----------- nftnl_udata_size() ---------->|\n */\nstruct nftnl_udata_buf {\n        uint32_t        size;\n        char            *end;\n        char            data[];\n};  And here is and example of use:  struct nftnl_udata_buf *buf;\nstruct nftnl_udata *attr;\nconst char *str = \"Hello World!\";\n\nbuf = nftnl_udata_buf_alloc(UDATA_SIZE);\nif (!buf) {\n        perror(\"OOM\");\n        exit(EXIT_FAILURE);\n}\n\nif (!nftnl_udata_put_strz(buf, MY_TYPE, str)) {\n        perror(\"Can't put attribute \\\"%s\\\"\", str);\n        exit(EXIT_FAILURE);\n}\n\nnftnl_udata_for_each(buf, attr)\n        printf(\"%s\\n\", (char *)nftnl_udata_attr_value(attr));\n\nnftnl_udata_buf_free(buf);",
+            "title": "TLV Infrastructure for user data"
+        },
+        {
+            "location": "/tlv-infrastructure/#commits",
+            "text": "",
+            "title": "Commits"
+        },
+        {
+            "location": "/tlv-infrastructure/#nftables",
+            "text": "set_elem: Use libnftnl/udata to store set element comment                      netlink_linearize: do not duplicate user data when linearizing user data       rule: Use libnftnl user data TLV infrastructure",
+            "title": "nftables"
+        },
+        {
+            "location": "/tlv-infrastructure/#libnftnl",
+            "text": "tests: Check set user data                                                     set: Add new attribute into 'set' to store user data                           set_elem: Copy user data memory                                                set_elem: Fix memory leak                                                      rule: Fix segfault due to invalid free of rule user data                       tests: Free nftnl_udata_buf before exit                                        tests: nft-rule-test: check for NFTNL_RULE_USERDATA                            udata: add TLV user data infrastructure",
+            "title": "libnftnl"
+        },
+        {
+            "location": "/tlv-infrastructure/#kernel",
+            "text": "netfilter: nf_tables: Add new attributes into nft_set to store user data.",
+            "title": "kernel"
+        },
+        {
+            "location": "/rule-replacement/",
+            "text": "Rule Replacement\n\n\nModify the parser and add necessary functions to provide the command \"nft\nreplace rule <ruleid_spec> <new_rule>\"\n\n\nExample of use:\n\n\n$ nft list ruleset -a\ntable ip filter {\n    chain output {\n        ip daddr 8.8.8.7 counter packets 0 bytes 0 # handle 3\n    }\n}\n$ nft replace rule filter output handle 3 ip daddr 8.8.8.8 counter\n$ nft list ruleset -a\ntable ip filter {\n    chain output {\n        ip daddr 8.8.8.8 counter packets 0 bytes 0 # handle 3\n    }\n}\n\n\n\n\nCommits\n\n\n\n\nsrc: Add command \"replace\" for rules",
+            "title": "Rule replacement"
+        },
+        {
+            "location": "/rule-replacement/#rule-replacement",
+            "text": "Modify the parser and add necessary functions to provide the command \"nft\nreplace rule <ruleid_spec> <new_rule>\"  Example of use:  $ nft list ruleset -a\ntable ip filter {\n    chain output {\n        ip daddr 8.8.8.7 counter packets 0 bytes 0 # handle 3\n    }\n}\n$ nft replace rule filter output handle 3 ip daddr 8.8.8.8 counter\n$ nft list ruleset -a\ntable ip filter {\n    chain output {\n        ip daddr 8.8.8.8 counter packets 0 bytes 0 # handle 3\n    }\n}",
+            "title": "Rule Replacement"
+        },
+        {
+            "location": "/rule-replacement/#commits",
+            "text": "src: Add command \"replace\" for rules",
+            "title": "Commits"
+        },
+        {
+            "location": "/small-features/",
+            "text": "Small features\n\n\nHere is a list of commits that introduces little features into libnftnl and\nlibmnl:\n\n\nlibnftnl\n\n\n\n\ntests: Add missing tests to test-script.sh                                   \n\n\nlibnftnl: gitignore: Fix mistake in gitignore regexp                         \n\n\nlibnftnl: Add to .gitignore all auto-generated files                         \n\n\n\n\nlibmnl\n\n\n\n\nnlmsg: Improve payload printing",
+            "title": "Small Features"
+        },
+        {
+            "location": "/small-features/#small-features",
+            "text": "Here is a list of commits that introduces little features into libnftnl and\nlibmnl:",
+            "title": "Small features"
+        },
+        {
+            "location": "/small-features/#libnftnl",
+            "text": "tests: Add missing tests to test-script.sh                                     libnftnl: gitignore: Fix mistake in gitignore regexp                           libnftnl: Add to .gitignore all auto-generated files",
+            "title": "libnftnl"
+        },
+        {
+            "location": "/small-features/#libmnl",
+            "text": "nlmsg: Improve payload printing",
+            "title": "libmnl"
+        },
+        {
+            "location": "/fixes/",
+            "text": "Fixes\n\n\nAlong my work at Google Summer of Code I have found and fixed several bugs in\nnftables and libnftnl. Here is a list of these commits:\n\n\nnftables\n\n\n\n\nparser: cap comment length to 128 bytes                                      \n\n\nparser: Consolidate comment production                                       \n\n\n\n\nlibnftnl\n\n\n\n\nexpr: cmp: Use cmp2str() instead of directly access to array                 \n\n\nutils: Fix out of bound access in nftnl_family2str                           \n\n\ntests: masq: Fix wrong expression creation                                   \n\n\ntests: Fix tests for immediate and lookup expressions                        \n\n\nexpr: Fix lookup builder                                                     \n\n\nsrc: Fix nftnl_*_get_data() to return the real attribute length              \n\n\nsrc: Fix missing nul-termination in nftnl_*_set_str()                        \n\n\nsrc: fix missing error checking in parser functions                          \n\n\nchain: Check correct attribute                                               \n\n\nsrc: Fix leak in nftnl_*_unset()                                             \n\n\nsrc: fix memory leaks at nft_[object]_nlmsg_parse",
+            "title": "Fixes"
+        },
+        {
+            "location": "/fixes/#fixes",
+            "text": "Along my work at Google Summer of Code I have found and fixed several bugs in\nnftables and libnftnl. Here is a list of these commits:",
+            "title": "Fixes"
+        },
+        {
+            "location": "/fixes/#nftables",
+            "text": "parser: cap comment length to 128 bytes                                        parser: Consolidate comment production",
+            "title": "nftables"
+        },
+        {
+            "location": "/fixes/#libnftnl",
+            "text": "expr: cmp: Use cmp2str() instead of directly access to array                   utils: Fix out of bound access in nftnl_family2str                             tests: masq: Fix wrong expression creation                                     tests: Fix tests for immediate and lookup expressions                          expr: Fix lookup builder                                                       src: Fix nftnl_*_get_data() to return the real attribute length                src: Fix missing nul-termination in nftnl_*_set_str()                          src: fix missing error checking in parser functions                            chain: Check correct attribute                                                 src: Fix leak in nftnl_*_unset()                                               src: fix memory leaks at nft_[object]_nlmsg_parse",
+            "title": "libnftnl"
+        },
+        {
+            "location": "/commits/",
+            "text": "List of my commits\n\n\nHere is a list of my commits to the Netfilter project sorted by repository.\nYou can click a commit title to open its diff and description.\n\n\nnftables\n\n\n\n\nPENDING APPOVAL\n \nSimplify parser rule_spec tree                             \n\n\nPENDING APPOVAL\n \nImplement deleting rule by description                     \n\n\nPENDING APPOVAL\n \ntest: shell: Add tests for deleting rule by description    \n\n\nPENDING APPOVAL\n \nparser: Improve syntax errors                              \n\n\nparser: cap comment length to 128 bytes                                      \n\n\nparser: Consolidate comment production                                       \n\n\nset_elem: Use libnftnl/udata to store set element comment                    \n\n\nnetlink_linearize: do not duplicate user data when linearizing user data     \n\n\nrule: Use libnftnl user data TLV infrastructure                              \n\n\nsrc: Add command \"replace\" for rules                                         \n\n\n\n\nlibnftnl\n\n\n\n\nrule: Fix comparison between rules if number of expressions differ           \n\n\nsrc: Implement rule comparison                                               \n\n\nexpr: cmp: Use cmp2str() instead of directly access to array                 \n\n\nutils: Fix out of bound access in nftnl_family2str                           \n\n\ntests: masq: Fix wrong expression creation                                   \n\n\ntests: Fix tests for immediate and lookup expressions                        \n\n\nexpr: Fix lookup builder                                                     \n\n\ntests: Add missing tests to test-script.sh                                   \n\n\nrule: Implement internal iterator for expressions                            \n\n\nsrc: Constify iterators                                                      \n\n\nsrc: Fix nftnl_*_get_data() to return the real attribute length              \n\n\nsrc: Fix missing nul-termination in nftnl_*_set_str()                        \n\n\ntests: Check set user data                                                   \n\n\nset: Add new attribute into 'set' to store user data                         \n\n\nsrc: fix missing error checking in parser functions                          \n\n\nchain: Check correct attribute                                               \n\n\nsrc: Fix leak in nftnl_*_unset()                                             \n\n\nset_elem: Copy user data memory                                              \n\n\nset_elem: Fix memory leak                                                    \n\n\nrule: Fix segfault due to invalid free of rule user data                     \n\n\ntests: Free nftnl_udata_buf before exit                                      \n\n\nlibnftnl: gitignore: Fix mistake in gitignore regexp                         \n\n\nlibnftnl: Add to .gitignore all auto-generated files                         \n\n\ntests: nft-rule-test: check for NFTNL_RULE_USERDATA                          \n\n\nudata: add TLV user data infrastructure                                      \n\n\nsrc: fix memory leaks at nft_[object]_nlmsg_parse                            \n\n\n\n\nlibmnl\n\n\n\n\nnlmsg: Improve payload printing                                              \n\n\n\n\nkernel\n\n\n\n\nnetfilter: nf_tables: Add new attributes into nft_set to store user data.",
+            "title": "List of commits"
+        },
+        {
+            "location": "/commits/#list-of-my-commits",
+            "text": "Here is a list of my commits to the Netfilter project sorted by repository.\nYou can click a commit title to open its diff and description.",
+            "title": "List of my commits"
+        },
+        {
+            "location": "/commits/#nftables",
+            "text": "PENDING APPOVAL   Simplify parser rule_spec tree                               PENDING APPOVAL   Implement deleting rule by description                       PENDING APPOVAL   test: shell: Add tests for deleting rule by description      PENDING APPOVAL   parser: Improve syntax errors                                parser: cap comment length to 128 bytes                                        parser: Consolidate comment production                                         set_elem: Use libnftnl/udata to store set element comment                      netlink_linearize: do not duplicate user data when linearizing user data       rule: Use libnftnl user data TLV infrastructure                                src: Add command \"replace\" for rules",
+            "title": "nftables"
+        },
+        {
+            "location": "/commits/#libnftnl",
+            "text": "rule: Fix comparison between rules if number of expressions differ             src: Implement rule comparison                                                 expr: cmp: Use cmp2str() instead of directly access to array                   utils: Fix out of bound access in nftnl_family2str                             tests: masq: Fix wrong expression creation                                     tests: Fix tests for immediate and lookup expressions                          expr: Fix lookup builder                                                       tests: Add missing tests to test-script.sh                                     rule: Implement internal iterator for expressions                              src: Constify iterators                                                        src: Fix nftnl_*_get_data() to return the real attribute length                src: Fix missing nul-termination in nftnl_*_set_str()                          tests: Check set user data                                                     set: Add new attribute into 'set' to store user data                           src: fix missing error checking in parser functions                            chain: Check correct attribute                                                 src: Fix leak in nftnl_*_unset()                                               set_elem: Copy user data memory                                                set_elem: Fix memory leak                                                      rule: Fix segfault due to invalid free of rule user data                       tests: Free nftnl_udata_buf before exit                                        libnftnl: gitignore: Fix mistake in gitignore regexp                           libnftnl: Add to .gitignore all auto-generated files                           tests: nft-rule-test: check for NFTNL_RULE_USERDATA                            udata: add TLV user data infrastructure                                        src: fix memory leaks at nft_[object]_nlmsg_parse",
+            "title": "libnftnl"
+        },
+        {
+            "location": "/commits/#libmnl",
+            "text": "nlmsg: Improve payload printing",
+            "title": "libmnl"
+        },
+        {
+            "location": "/commits/#kernel",
+            "text": "netfilter: nf_tables: Add new attributes into nft_set to store user data.",
+            "title": "kernel"
+        },
+        {
+            "location": "/activity/",
+            "text": "Project activity\n\n\nYou can get an impression about my activity into the project glancing the\n\nproject patchwork",
+            "title": "My activity"
+        },
+        {
+            "location": "/activity/#project-activity",
+            "text": "You can get an impression about my activity into the project glancing the project patchwork",
+            "title": "Project activity"
+        }
+    ]
+}

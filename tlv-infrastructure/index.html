@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>TLV Infrastructure - GSOC: Carlos Falgueras García</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+        <link href="../css/base.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">GSOC: Carlos Falgueras García</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="..">Home</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">My work <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Features</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../rule-deletion/">Rule deletion</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">TLV Infrastructure</a>
+</li>
+
+        
+            
+<li >
+    <a href="../rule-replacement/">Rule replacement</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+<li >
+    <a href="../small-features/">Small Features</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../fixes/">Fixes</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../commits/">List of commits</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../activity/">My activity</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="../rule-deletion/">
+                        <i class="fa fa-arrow-left"></i> Previous
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../rule-replacement/">
+                        Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#tlv-infrastructure-for-user-data">TLV Infrastructure for user data</a></li>
+        
+            <li><a href="#commits">Commits</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="tlv-infrastructure-for-user-data">TLV Infrastructure for user data</h1>
+<p>The aim of this infrastructure is provide an easy way to store sequentially user
+data into nft kernel objects. It provides functions that allow to create a
+buffer of TLV (Type-Len-Value).</p>
+<p>The structures looks like this:</p>
+<pre><code class="c">/*
+ * TLV structures:
+ * nftnl_udata
+ *  &lt;-------- HEADER --------&gt; &lt;------ PAYLOAD ------&gt;
+ * +------------+-------------+- - - - - - - - - - - -+
+ * |    type    |     len     |         value         |
+ * |  (1 byte)  |   (1 byte)  |                       |
+ * +--------------------------+- - - - - - - - - - - -+
+ *  &lt;-- sizeof(nftnl_udata) -&gt; &lt;-- nftnl_udata-&gt;len --&gt;
+ */
+struct nftnl_udata {
+        uint8_t         type;
+        uint8_t         len;
+        unsigned char   value[];
+} __attribute__((__packed__));
+
+/*
+ *              +---------------------------------++
+ *              | data[]                          ||
+ *              |   ||                            ||
+ *              |   \/                            \/
+ *  +-------+-------+-------+-------+ ... +-------+- - - - - - -+
+ *  | size  |  end  |  TLV  |  TLV  |     |  TLV  |    Empty    |
+ *  +-------+-------+-------+-------+ ... +-------+- - - - - - -+
+ *                  |&lt;---- nftnl_udata_len() ----&gt;|
+ *                  |&lt;----------- nftnl_udata_size() ----------&gt;|
+ */
+struct nftnl_udata_buf {
+        uint32_t        size;
+        char            *end;
+        char            data[];
+};
+</code></pre>
+
+<p>And here is and example of use:</p>
+<pre><code class="c">struct nftnl_udata_buf *buf;
+struct nftnl_udata *attr;
+const char *str = &quot;Hello World!&quot;;
+
+buf = nftnl_udata_buf_alloc(UDATA_SIZE);
+if (!buf) {
+        perror(&quot;OOM&quot;);
+        exit(EXIT_FAILURE);
+}
+
+if (!nftnl_udata_put_strz(buf, MY_TYPE, str)) {
+        perror(&quot;Can't put attribute \&quot;%s\&quot;&quot;, str);
+        exit(EXIT_FAILURE);
+}
+
+nftnl_udata_for_each(buf, attr)
+        printf(&quot;%s\n&quot;, (char *)nftnl_udata_attr_value(attr));
+
+nftnl_udata_buf_free(buf);
+</code></pre>
+
+<h2 id="commits">Commits</h2>
+<h3 id="nftables"><a href="http://netfilter.org/projects/nftables/index.html" title="nftables project page">nftables</a></h3>
+<ul>
+<li><a href="https://git.netfilter.org/nftables/commit/?id=61f851beda31aa3a7dcd4ef534d91b5cfb13594b">set_elem: Use libnftnl/udata to store set element comment                    </a></li>
+<li><a href="https://git.netfilter.org/nftables/commit/?id=8979727084d90e6061c8d0f562f8f12e784a657d">netlink_linearize: do not duplicate user data when linearizing user data     </a></li>
+<li><a href="https://git.netfilter.org/nftables/commit/?id=795d88cb710512d9b85afbb17beaeec3d92dcd54">rule: Use libnftnl user data TLV infrastructure                              </a></li>
+</ul>
+<h3 id="libnftnl"><a href="http://netfilter.org/projects/libnftnl/index.html" title="libnftnl project page">libnftnl</a></h3>
+<ul>
+<li><a href="https://git.netfilter.org/libnftnl/commit/?id=8a593d1cf97a90e750b53f4387ef19da8d7fc574">tests: Check set user data                                                   </a></li>
+<li><a href="https://git.netfilter.org/libnftnl/commit/?id=352a74d4e93e3db7380197720eb1003365a5781d">set: Add new attribute into 'set' to store user data                         </a></li>
+<li><a href="https://git.netfilter.org/libnftnl/commit/?id=c326bce873df8fac60c4e8ba8508607f82bb5827">set_elem: Copy user data memory                                              </a></li>
+<li><a href="https://git.netfilter.org/libnftnl/commit/?id=88529a7ea173921efa15671b971655da5002ade1">set_elem: Fix memory leak                                                    </a></li>
+<li><a href="https://git.netfilter.org/libnftnl/commit/?id=0edd209705bc4cf9d2a9e17084310c02d81f4d64">rule: Fix segfault due to invalid free of rule user data                     </a></li>
+<li><a href="https://git.netfilter.org/libnftnl/commit/?id=e4e00c94a2591ef5367d559a4087dde3071e7833">tests: Free nftnl_udata_buf before exit                                      </a></li>
+<li><a href="https://git.netfilter.org/libnftnl/commit/?id=9552d6cebd050796d2255ad387529f1f22032add">tests: nft-rule-test: check for NFTNL_RULE_USERDATA                          </a></li>
+<li><a href="https://git.netfilter.org/libnftnl/commit/?id=5c3bc232dc9d1dd01d589fab096f67d944621fc2">udata: add TLV user data infrastructure                                      </a></li>
+</ul>
+<h3 id="kernel"><a href="https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git" title="linux kernel cgit page">kernel</a></h3>
+<ul>
+<li><a href="https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=e6d8ecac9e68265aee9be711c5bd29406129666f">netfilter: nf_tables: Add new attributes into nft_set to store user data.    </a></li>
+</ul></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

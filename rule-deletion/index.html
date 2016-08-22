@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Rule deletion - GSOC: Carlos Falgueras García</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+        <link href="../css/base.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">GSOC: Carlos Falgueras García</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="..">Home</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">My work <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Features</a>
+    <ul class="dropdown-menu">
+        
+            
+<li class="active">
+    <a href="./">Rule deletion</a>
+</li>
+
+        
+            
+<li >
+    <a href="../tlv-infrastructure/">TLV Infrastructure</a>
+</li>
+
+        
+            
+<li >
+    <a href="../rule-replacement/">Rule replacement</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+<li >
+    <a href="../small-features/">Small Features</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../fixes/">Fixes</a>
+</li>
+
+                    
+                        
+<li >
+    <a href="../commits/">List of commits</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../activity/">My activity</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="..">
+                        <i class="fa fa-arrow-left"></i> Previous
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../tlv-infrastructure/">
+                        Next <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#rule-deletion-by-description">Rule deletion by description</a></li>
+        
+            <li><a href="#commits">Commits</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="rule-deletion-by-description">Rule deletion by description</h1>
+<p>This patch introduces deletion in a similar fashion as in iptables, thus,
+we can delete the first rule that matches our description, for example:</p>
+<pre><code class="bash">$ nft list -a ruleset
+table ip t {
+    chain c {
+        ip saddr 1.1.1.1 counter packets 0 bytes 0 # handle 1
+        ip saddr 1.1.1.2 counter packets 0 bytes 0 # handle 2
+        ip saddr 1.1.1.2 counter packets 0 bytes 0 # handle 3
+        ip saddr 1.1.1.4 counter packets 0 bytes 0 # handle 4
+    }
+}
+$ nft delete rule table chain ip saddr 1.1.1.2 counter
+$ nft list -a ruleset
+table ip t {
+    chain c {
+        ip saddr 1.1.1.1 counter packets 0 bytes 0 # handle 1
+        ip saddr 1.1.1.2 counter packets 0 bytes 0 # handle 3
+        ip saddr 1.1.1.4 counter packets 0 bytes 0 # handle 4
+    }
+}
+</code></pre>
+
+<p>For archive this I have needed to introduce several changes into libnftnl
+library. I have implemented comparators for rule and expression objects.</p>
+<p><strong>NOTE:</strong> I have some patches that must be accepted before I can consider the
+work completed.</p>
+<h2 id="commits">Commits</h2>
+<h3 id="nftables"><a href="http://netfilter.org/projects/nftables/index.html" title="nftables project page">nftables</a></h3>
+<ul>
+<li><em>PENDING APPOVAL</em> <a href="https://github.com/FarK/nf-nftables/commit/842c89d3ddda78d2c4e3e241f07264a780fe53f8">parser: Improve syntax errors                              </a></li>
+<li><em>PENDING APPOVAL</em> <a href="https://github.com/FarK/nf-nftables/commit/ed007e53d5f9adc91d65f61900770f1cb62a5f12">test: shell: Add tests for deleting rule by description    </a></li>
+<li><em>PENDING APPOVAL</em> <a href="https://github.com/FarK/nf-nftables/commit/d6b4900e32de3aa2c319b975770e9412c8ad2bec">Implement deleting rule by description                     </a></li>
+<li><em>PENDING APPOVAL</em> <a href="https://github.com/FarK/nf-nftables/commit/1165ea95d8efe191fcc5bab075219e512c371eb8">Simplify parser rule_spec tree                             </a></li>
+</ul>
+<h3 id="libnftnl"><a href="http://netfilter.org/projects/libnftnl/index.html" title="libnftnl project page">libnftnl</a></h3>
+<ul>
+<li><a href="https://git.netfilter.org/libnftnl/commit/?id=0cbe60118eafe734de7369783cf1c92f6e0934f1">rule: Fix comparison between rules if number of expressions differ           </a></li>
+<li><a href="https://git.netfilter.org/libnftnl/commit/?id=e35693fd13de771e1e047ffa4f799f72f1446e8d">src: Implement rule comparison                                               </a></li>
+<li><a href="https://git.netfilter.org/libnftnl/commit/?id=94ccd4e72d3dfff000d8212ae63f45cd950bb53b">rule: Implement internal iterator for expressions                            </a></li>
+<li><a href="https://git.netfilter.org/libnftnl/commit/?id=b02d5d5b766e30a2afcbb706aa69ea7a51b40bc8">src: Constify iterators                                                      </a></li>
+</ul></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</center>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
